@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"werichardson.com/c4/game/board"
 	"werichardson.com/c4/game/engine"
@@ -25,9 +27,12 @@ func place(c *fiber.Ctx) error {
 	}
 	b := board.Board{Bitboards: [2]board.Bitboard{0, 0}, Turn: 1, Hash: 0}
 	b.Load(move.History)
+	fmt.Println(move.History)
 	cmove := engine.Root(b, float64(5))
+	b.Move(cmove)
 	pwin := board.CheckAlign(b.Bitboards[1])
 	cwin := board.CheckAlign(b.Bitboards[0])
+	board.Print(b)
 	return c.JSON(fiber.Map{
 		"move": cmove,
 		"pwin": pwin,

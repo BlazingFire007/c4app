@@ -1,4 +1,5 @@
-import { createSignal, For } from 'solid-js';
+import { createSignal, For, Match, Switch } from 'solid-js';
+import GameOver from './GameOver';
 import { colToLetter, letterToCol } from './util';
 
 type Stone = 'X' | 'O' | ' ';
@@ -18,14 +19,7 @@ interface SquareProps {
 export default function App() {
   const [history, setHistory] = createSignal<string[]>([]);
   const [board, setBoard] = createSignal<Board>({ turn: 'X', position: Array(42).fill(' ') });
-  async function initGame() {
-    const response = await fetch('/start', {
-      method: 'POST',
-    });
-    const { move } = await response.json();
-
-    setHistory(history => [...history, move]);
-  }
+  const [winner, setWinner] = createSignal<'X' | 'O' | 'Tie'>();
   async function place(column: number) {
     makeMove(column);
     console.log('player move', colToLetter(column));
@@ -36,8 +30,13 @@ export default function App() {
       },
       body: JSON.stringify({ history: history().join('') }),
     });
-    const { move } = await response.json();
-    console.log('computer move', colToLetter(move));
+    const { move, pwin, cwin } = await response.json();
+    console.log(`server move ${move}`);
+    console.log(`pwin ${pwin}`);
+    console.log(`cwin ${cwin}`);
+    if (pwin) setWinner('X');
+    if (cwin) setWinner('O');
+    if (board().position.every(stone => stone !== ' ')) setWinner('Tie');
     makeMove(move);
   }
 
@@ -59,13 +58,20 @@ export default function App() {
   return (
     <main class='max-w-fit mx-auto'>
       <h1 class='text-5xl font-bold text-center pt-4 mb-5'>Connect 4</h1>
-      <div class='grid place-content-center items-center'>
-        <div class='grid grid-cols-7 grid-rows-6' id='game-grid'>
-          <For each={board().position}>
-            {(stone, index) => <Square stone={stone} index={index()} place={place} />}
-          </For>
-        </div>
-      </div>
+      <Switch>
+        <Match when={winner() !== undefined}>
+          <GameOver winner={winner()} />
+        </Match>
+        <Match when={winner() == undefined}>
+          <div class='grid place-content-center items-center'>
+            <div class='grid grid-cols-7 grid-rows-6' id='game-grid'>
+              <For each={board().position}>
+                {(stone, index) => <Square stone={stone} index={index()} place={place} />}
+              </For>
+            </div>
+          </div>
+        </Match>
+      </Switch>
     </main>
   );
 }
