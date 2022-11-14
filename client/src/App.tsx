@@ -18,7 +18,6 @@ interface SquareProps {
 export default function App() {
   const [history, setHistory] = createSignal<string[]>([]);
   const [board, setBoard] = createSignal<Board>({ turn: 'X', position: Array(42).fill(' ') });
-  const [placers, setPlacers] = createSignal<Board>({ turn: 'X', position: Array(7).fill('X') });
   async function initGame() {
     const response = await fetch('/start', {
       method: 'POST',
