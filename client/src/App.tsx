@@ -1,6 +1,6 @@
 import { createSignal, For, Match, Switch } from 'solid-js';
 import GameOver from './GameOver';
-import { colToLetter, letterToCol } from './util';
+import { colToLetter } from './util';
 
 type Stone = 'X' | 'O' | ' ';
 type Position = Stone[];
