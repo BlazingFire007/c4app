@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	"werichardson.com/c4/game/board"
-	"werichardson.com/c4/game/engine"
+	"werichardson.com/goc4/src/board"
 )
 
 type Move struct {
