@@ -6,13 +6,27 @@ import (
 	"werichardson.com/c4/game/engine"
 )
 
+type Move struct {
+	History string `json:"history" xml:"history" form:"history"`
+}
+
 func startGame(c *fiber.Ctx) error {
 	b := board.Board{Bitboards: [2]board.Bitboard{0, 0}, Turn: 1, Hash: 0}
-	cmove := engine.Root(b, float64(5))
-	b.Move(cmove)
-	p1, p2 := board.Serialize(b)
+	b.Move('D')
 	return c.JSON(fiber.Map{
-		"p1": p1,
-		"p2": p2,
+		"move": 'D',
+	})
+}
+
+func place(c *fiber.Ctx) error {
+	move := new(Move)
+	if err := c.BodyParser(move); err != nil {
+		return err
+	}
+	b := board.Board{Bitboards: [2]board.Bitboard{0, 0}, Turn: 1, Hash: 0}
+	b.Load(move.History)
+	cmove := engine.Root(b, float64(5))
+	return c.JSON(fiber.Map{
+		"move": cmove,
 	})
 }

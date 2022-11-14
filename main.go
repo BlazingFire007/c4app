@@ -8,5 +8,6 @@ func main() {
 	app := fiber.New()
 	app.Static("/", "./client/dist")
 	app.Post("/start", startGame)
+	app.Post("/place", place)
 	app.Listen(":3000")
 }
