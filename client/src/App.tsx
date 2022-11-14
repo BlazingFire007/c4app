@@ -1,5 +1,6 @@
 import { createSignal, For, Match, Switch } from 'solid-js';
 import GameOver from './GameOver';
+import NewGame from './NewGame';
 import { colToLetter } from './util';
 
 type Stone = 'X' | 'O' | ' ';
@@ -20,6 +21,10 @@ export default function App() {
   const [history, setHistory] = createSignal<string[]>([]);
   const [board, setBoard] = createSignal<Board>({ turn: 'X', position: Array(42).fill(' ') });
   const [winner, setWinner] = createSignal<'X' | 'O' | 'Tie'>();
+  const [newGame, showNewGame] = createSignal<boolean>(true);
+  function toggleNewGame() {
+    showNewGame(!newGame());
+  }
   async function place(column: number) {
     makeMove(column);
     console.log('player move', colToLetter(column));
@@ -56,13 +61,13 @@ export default function App() {
   }
 
   return (
-    <main class='max-w-fit mx-auto'>
-      <h1 class='text-5xl font-bold text-center pt-4 mb-5'>Connect 4</h1>
-      <Switch>
-        <Match when={winner() !== undefined}>
-          <GameOver winner={winner()} />
-        </Match>
-        <Match when={winner() == undefined}>
+    <Switch>
+      <Match when={newGame()}>
+        <NewGame showGame={toggleNewGame} />
+      </Match>
+      <Match when={!newGame()}>
+        <main class='grid place-content-center'>
+          <h1 class='text-5xl font-bold text-center pt-4 mb-5'>Connect 4</h1>
           <div class='grid place-content-center items-center'>
             <div class='grid grid-cols-7 grid-rows-6' id='game-grid'>
               <For each={board().position}>
@@ -70,9 +75,10 @@ export default function App() {
               </For>
             </div>
           </div>
-        </Match>
-      </Switch>
-    </main>
+          {winner() !== undefined && <GameOver winner={winner} />}
+        </main>
+      </Match>
+    </Switch>
   );
 }
 
