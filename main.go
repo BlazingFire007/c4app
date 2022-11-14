@@ -9,5 +9,5 @@ func main() {
 	app.Static("/", "./client/dist")
 	app.Post("/start", startGame)
 	app.Post("/place", place)
-	app.Listen(":3000")
+	app.Listen("0.0.0.0:80")
 }
