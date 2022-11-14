@@ -1,8 +1,0 @@
-[phases.setup]
-providers = ["go", "node"]
-
-[phases.build]
-cmds = ["./build.sh"]
-
-[start]
-cmd = "./c4app"
