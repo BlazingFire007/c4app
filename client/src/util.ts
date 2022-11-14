@@ -1,5 +1,7 @@
-export function colToLetter(column: number) {
-  return String.fromCharCode(65 + column);
+type MoveChar = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
+
+export function colToLetter(column: number): MoveChar {
+  return String.fromCharCode(65 + column) as MoveChar;
 }
 
 export function letterToCol(column: string) {

@@ -28,7 +28,9 @@ func place(c *fiber.Ctx) error {
 	b := board.Board{Bitboards: [2]board.Bitboard{0, 0}, Turn: 1, Hash: 0}
 	b.Load(move.History)
 	fmt.Println(move.History)
-	cmove := engine.Root(b, float64(5))
+	thread := make(chan board.Column)
+	go callEngine(b, thread)
+	cmove := <-thread
 	b.Move(cmove)
 	pwin := board.CheckAlign(b.Bitboards[1])
 	cwin := board.CheckAlign(b.Bitboards[0])
@@ -38,4 +40,8 @@ func place(c *fiber.Ctx) error {
 		"pwin": pwin,
 		"cwin": cwin,
 	})
+}
+
+func callEngine(b board.Board, thread chan board.Column) {
+	thread <- engine.Root(b, float64(5))
 }
