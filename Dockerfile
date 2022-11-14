@@ -9,7 +9,7 @@ RUN pnpm build
 FROM golang:alpine
 WORKDIR /app
 COPY . .
-COPY --from=builder /app/client ./client
+COPY --from=builder /app/client /app/client
 RUN go build -ldflags="-w -s" -o main
 EXPOSE 80
 CMD ["./main"]
