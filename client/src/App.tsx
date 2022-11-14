@@ -22,11 +22,13 @@ export default function App() {
   const [board, setBoard] = createSignal<Board>({ turn: 'X', position: Array(42).fill(' ') });
   const [winner, setWinner] = createSignal<'X' | 'O' | 'Tie'>();
   const [newGame, showNewGame] = createSignal<boolean>(true);
+  const [waiting, setWaiting] = createSignal<boolean>(false);
   function toggleNewGame() {
     showNewGame(!newGame());
   }
   async function place(column: number) {
     makeMove(column);
+    setWaiting(true);
     console.log('player move', colToLetter(column));
     const response = await fetch('/place', {
       method: 'POST',
@@ -42,10 +44,12 @@ export default function App() {
     if (pwin) setWinner('X');
     if (cwin) setWinner('O');
     if (board().position.every(stone => stone !== ' ')) setWinner('Tie');
+    setWaiting(false);
     makeMove(move);
   }
 
   function makeMove(column: number) {
+    if (waiting()) return false;
     let position = [...board().position];
     let placed = false;
     for (let i = 42; i >= 0; i -= 7) {
