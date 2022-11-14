@@ -145,3 +145,16 @@ func Print(b Board) {
 	fmt.Printf("     ---------------\n")
 	fmt.Printf("     |A|B|C|D|E|F|G|\n\n")
 }
+
+func Serialize(b Board) ([]int, []int) {
+	p1 := make([]int, 0, 42)
+	p2 := make([]int, 0, 42)
+	for i := 0; i < 42; i++ {
+		if b.Get(Position(i), 1) {
+			p1 = append(p1, i)
+		} else if b.Get(Position(i), 0) {
+			p2 = append(p2, i)
+		}
+	}
+	return p1, p2
+}
