@@ -2,6 +2,7 @@ import { Accessor } from 'solid-js';
 
 interface GameOverProps {
   winner: Accessor<'X' | 'O' | 'Tie' | undefined>;
+  showNewGame: () => void;
 }
 
 export default function GameOver(props: GameOverProps) {
@@ -24,7 +25,10 @@ export default function GameOver(props: GameOverProps) {
             <p class='mb-2 -ml-3 text-4xl'>{emoji}</p>
           </div>
           <div class={`modal-action`}>
-            <button class={`btn btn-accent border-2 border-accent-focus`} onClick={close}>
+            <button
+              class={`btn btn-accent border-2 border-accent-focus`}
+              onClick={props.showNewGame}
+            >
               Close
             </button>
           </div>

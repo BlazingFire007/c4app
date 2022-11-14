@@ -24,10 +24,13 @@ export default function App() {
   const [newGame, showNewGame] = createSignal<boolean>(true);
   const [waiting, setWaiting] = createSignal<boolean>(false);
   function toggleNewGame() {
+    setWinner(undefined);
+    setBoard({ turn: 'X', position: Array(42).fill(' ') });
+    setHistory([]);
     showNewGame(!newGame());
   }
   async function place(column: number) {
-    makeMove(column);
+    if (!makeMove(column)) return;
     setWaiting(true);
     console.log('player move', colToLetter(column));
     const response = await fetch('/place', {
@@ -62,6 +65,7 @@ export default function App() {
     if (placed === false) return false;
     setHistory(history => [...history, colToLetter(column)]);
     setBoard({ turn: board().turn === 'X' ? 'O' : 'X', position });
+    return true;
   }
 
   return (
@@ -79,7 +83,7 @@ export default function App() {
               </For>
             </div>
           </div>
-          {winner() !== undefined && <GameOver winner={winner} />}
+          {winner() !== undefined && <GameOver winner={winner} showNewGame={toggleNewGame} />}
         </main>
       </Match>
     </Switch>
