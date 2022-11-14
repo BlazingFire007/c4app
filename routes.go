@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 
+	"github.com/BlazingFire007/goc4/src/board"
+	"github.com/BlazingFire007/goc4/src/engine"
 	"github.com/gofiber/fiber/v2"
-	"werichardson.com/goc4/src/board"
 )
 
 type Move struct {
