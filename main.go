@@ -27,6 +27,11 @@ func SearchMove() js.Func {
 	})
 }
 
+type Winner struct {
+	pwin bool
+	cwin bool
+}
+
 func CheckWin() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		fmt.Println("CheckWin")
@@ -36,12 +41,6 @@ func CheckWin() js.Func {
 		b.Load(history)
 		cwin := board.CheckAlign(b.Bitboards[0])
 		pwin := board.CheckAlign(b.Bitboards[1])
-		if cwin {
-			return 1
-		} else if pwin {
-			return 2
-		} else {
-			return 0
-		}
+		return Winner{pwin, cwin}
 	})
 }
