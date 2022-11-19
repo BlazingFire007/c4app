@@ -85,14 +85,8 @@ export default function Game() {
   async function fetchMove() {
     // setShowLoader(true);
     setButtonDisable(true);
-    const response = await fetch('/place', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ history: memory().join('') }),
-    });
-    const { pwin, cwin, move } = await response.json();
+    // @ts-expect-error
+    const move = await SearchMove(memory().join(''));
     setBoard(b => {
       const nb = [...b];
       nb[lowestEmpty(move)] = color() === 'primary' ? 'O' : 'X';
@@ -106,7 +100,6 @@ export default function Game() {
     });
     // setShowLoader(false);
     setButtonDisable(false);
-    console.log(pwin, cwin);
     if (pwin && color() === 'primary') {
       return youWin();
     } else if (pwin && color() === 'accent') {
