@@ -6,6 +6,7 @@ import (
 	"syscall/js"
 
 	"github.com/eli-rich/goc4/src/board"
+	"github.com/eli-rich/goc4/src/engine"
 )
 
 func main() {
@@ -18,7 +19,9 @@ func SearchMove() js.Func {
 		fmt.Println("SearchMove")
 		history := args[0].String()
 		fmt.Println(history)
-		b := board.Board{}
+		b := board.Board{Bitboards: [2]board.Bitboard{0, 0}, Turn: 1, Hash: 0}
+		b.Load(history)
+		cmove := engine.Root(b, 5)
 
 		return nil
 	})
