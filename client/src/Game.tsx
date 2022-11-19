@@ -18,13 +18,14 @@ type Popup = 'win' | 'lose' | 'draw' | 'error' | 'none';
 
 type Move = number;
 
+const worker = new Worker('worker.js');
+
 export default function Game() {
   const [board, setBoard] = createSignal<Board>(Array(42).fill(' '));
   const [memory, setMemory] = createSignal<Memory>([]);
   const [buttonDisable, setButtonDisable] = createSignal<boolean>(false);
   const [showNG, setShowNG] = createSignal<boolean>(true);
   const [color, setColor] = createSignal<Color>('primary');
-  // const [showLoader, setShowLoader] = createSignal<boolean>(false);
   const [showPopup, setShowPopup] = createSignal<Popup>('none');
 
   function newGame() {
@@ -82,35 +83,44 @@ export default function Game() {
     fetchMove();
   }
 
+  worker.onmessage = message => {
+    const { data } = message;
+    if (data[0] === 'move') {
+      const move = parseInt(data[1]);
+      setBoard(b => {
+        const nb = [...b];
+        nb[lowestEmpty(move)] = color() === 'primary' ? 'O' : 'X';
+        return nb;
+      });
+      console.log(move);
+      setMemory(m => {
+        const nm = [...m];
+        nm.push(colToLetter(move % 7));
+        return nm;
+      });
+      setButtonDisable(false);
+      worker.postMessage(['checkwin', memory().join('')]);
+    } else if (data[0] === 'win') {
+      const pwin = data[1];
+      const cwin = data[2];
+      console.log(pwin, cwin);
+      if (pwin && color() === 'primary') {
+        return youWin();
+      } else if (pwin && color() === 'accent') {
+        return youLose();
+      }
+      if (cwin && color() === 'accent') {
+        return youWin();
+      } else if (cwin && color() === 'primary') {
+        return youLose();
+      }
+      if (board().every(s => s !== ' ')) return setShowPopup('draw');
+    }
+  };
+
   async function fetchMove() {
-    // setShowLoader(true);
     setButtonDisable(true);
-    // @ts-expect-error
-    const move = await SearchMove(memory().join(''));
-    setBoard(b => {
-      const nb = [...b];
-      nb[lowestEmpty(move)] = color() === 'primary' ? 'O' : 'X';
-      return nb;
-    });
-    console.log(move);
-    setMemory(m => {
-      const nm = [...m];
-      nm.push(colToLetter(move % 7));
-      return nm;
-    });
-    // setShowLoader(false);
-    setButtonDisable(false);
-    if (pwin && color() === 'primary') {
-      return youWin();
-    } else if (pwin && color() === 'accent') {
-      return youLose();
-    }
-    if (cwin && color() === 'accent') {
-      return youWin();
-    } else if (cwin && color() === 'primary') {
-      return youLose();
-    }
-    if (board().every(s => s !== ' ')) return setShowPopup('draw');
+    worker.postMessage(['search', memory().join('')]);
   }
 
   return (

@@ -12,24 +12,27 @@ import (
 func main() {
 
 	js.Global().Set("SearchMove", SearchMove())
+	js.Global().Set("CheckWin", CheckWin())
 	select {}
 }
 
 func SearchMove() js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		fmt.Println("SearchMove")
 		history := args[0].String()
-		fmt.Println(history)
-		b := board.Board{Bitboards: [2]board.Bitboard{0, 0}, Turn: 1, Hash: 0}
-		b.Load(history)
-		cmove := engine.Root(b, 5)
-		return int(cmove)
+		handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			resolve := args[0]
+			go func() {
+				fmt.Println("SearchMove")
+				fmt.Println(history)
+				b := board.Board{Bitboards: [2]board.Bitboard{0, 0}, Turn: 1, Hash: 0}
+				b.Load(history)
+				cmove := engine.Root(b, 5)
+				resolve.Invoke(int(cmove))
+			}()
+			return nil
+		})
+		return js.Global().Get("Promise").New(handler)
 	})
-}
-
-type Winner struct {
-	pwin bool
-	cwin bool
 }
 
 func CheckWin() js.Func {
@@ -41,6 +44,9 @@ func CheckWin() js.Func {
 		b.Load(history)
 		cwin := board.CheckAlign(b.Bitboards[0])
 		pwin := board.CheckAlign(b.Bitboards[1])
-		return Winner{pwin, cwin}
+		winner := js.Global().Get("Object")
+		winner.Set("cwin", cwin)
+		winner.Set("pwin", pwin)
+		return winner
 	})
 }
