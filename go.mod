@@ -3,20 +3,9 @@ module github.com/eli-rich/c4app
 go 1.19
 
 require (
-	github.com/eli-rich/goc4 v0.0.0-20221114193815-67b434ec20c6
-	github.com/gofiber/fiber/v2 v2.39.0
-)
-
-require (
-	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/eli-rich/goc4 v0.0.0-20221118165335-79a422fbb7e1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
-	github.com/klauspost/compress v1.15.0 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
-	github.com/mattn/go-runewidth v0.0.14 // indirect
-	github.com/rivo/uniseg v0.2.0 // indirect
-	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.40.0 // indirect
-	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab // indirect
+	github.com/mattn/go-colorable v0.1.9 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
+	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 )
