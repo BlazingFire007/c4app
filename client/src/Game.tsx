@@ -27,7 +27,7 @@ export default function Game() {
   const [showPopup, setShowPopup] = createSignal<Popup>('none');
 
   function newGame() {
-    setBoard(Array(42).fill(' '));
+    setBoard(b => b.map(_ => ' '));
     setMemory([]);
     setButtonDisable(false);
     setShowNG(false);
@@ -64,7 +64,6 @@ export default function Game() {
   function place(col: Move) {
     console.log(`Memory: ${memory()}`);
     console.log(`Column: ${col}`);
-    console.log(`Board: ${board()}`);
     if (showNG()) return;
     if (buttonDisable()) return;
     const potential = lowestEmpty(col);
